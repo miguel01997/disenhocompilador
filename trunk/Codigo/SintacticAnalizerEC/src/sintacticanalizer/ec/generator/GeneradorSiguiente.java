@@ -12,7 +12,7 @@ import sintacticanalizer.ec.components.Siguiente;
 
 /**
  *
- * @author Id Teknology
+ * @author Guido Casco
  */
 public class GeneradorSiguiente {
 
@@ -88,36 +88,16 @@ public class GeneradorSiguiente {
                             for (int l = 0; l < siguientes.size(); l++) {
                                 Siguiente sgteBuscado = siguientes.get(l);
 
-                                if (simbolo1.compareTo(sgteBuscado.getNoTerminal()) == 0) {
+                                if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
                                     siguienteB = sgteBuscado;
                                     break;
                                 }
                             }
 
-                            //Se busca primero Beta en primeros.
-                            Primero primeroBeta = null;
-                            for (int l = 0; l < primeros.size(); l++) {
-                                Primero primBuscado = primeros.get(l);
 
-                                if (simbolo2.compareTo(primBuscado.getNoTerminal()) == 0) {
-                                    primeroBeta = primBuscado;
-                                    break;
-                                }
-                            }
+                            siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
 
-                            if (tieneVacio(primeroBeta) == true) {
-                                siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
-                            }
-
-                            //Se copia todos los terminales del primero Beta a siguiente B
-                            //sin el vacio "e"
-                            for (int l = 0; l < primeroBeta.getConjuntoPrimero().size(); l++) {
-                                String terminal = (String) primeroBeta.getConjuntoPrimero().get(l);
-                                if (terminal.compareTo("e") != 0) {
-                                    siguienteB.agregarConjuntoSiguiente(terminal);
-                                }
-                            }
-
+                        
                         //B es no terminal y Beta es terminal
                         } else if (esNoTerminal(simbolo1) == true &&
                                 esNoTerminal(simbolo2) == false) {
@@ -296,36 +276,16 @@ public class GeneradorSiguiente {
                             for (int l = 0; l < siguientes.size(); l++) {
                                 Siguiente sgteBuscado = siguientes.get(l);
 
-                                if (simbolo1.compareTo(sgteBuscado.getNoTerminal()) == 0) {
+                                if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
                                     siguienteB = sgteBuscado;
                                     break;
                                 }
                             }
 
-                            //Se busca primero Beta en primeros.
-                            Primero primeroBeta = null;
-                            for (int l = 0; l < primeros.size(); l++) {
-                                Primero primBuscado = primeros.get(l);
-
-                                if (simbolo2.compareTo(primBuscado.getNoTerminal()) == 0) {
-                                    primeroBeta = primBuscado;
-                                    break;
-                                }
-                            }
-
-                            if (tieneVacio(primeroBeta) == true) {
-                                siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
-                            }
-
-                            //Se copia todos los terminales del primero Beta a siguiente B
-                            //sin el vacio "e"
-                            for (int l = 0; l < primeroBeta.getConjuntoPrimero().size(); l++) {
-                                String terminal = (String) primeroBeta.getConjuntoPrimero().get(l);
-                                if (terminal.compareTo("e") != 0) {
-                                    siguienteB.agregarConjuntoSiguiente(terminal);
-                                }
-                            }
-
+                            
+                            siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
+                            
+                            
                         //B es no terminal y Beta es terminal
                         } else if (esNoTerminal(simbolo1) == true &&
                                 esNoTerminal(simbolo2) == false) {
@@ -484,6 +444,86 @@ public class GeneradorSiguiente {
 
         System.out.println("***Siguiente: Primera Pasada***");
         imprimirConjuntoSiguienteDeLosNoTerminales();
+
+
+        //   b- 2da Pasada: Se reemplazara de forma recursiva los textos
+        //      siguiente(noTerminal) por su valor.
+        for (int i=0; i < siguientes.size(); i++) {
+            Siguiente unSiguiente = siguientes.get(i);
+            unSiguiente.setConjuntoSiguiente(reemplazarSiguientes(unSiguiente));
+        }
+
+        System.out.println("***Siguiente: Segunda Pasada***");
+        imprimirConjuntoSiguienteDeLosNoTerminales();
+
+        //   c- 3era Pasada: Eliminar terminales y vacios duplicados
+        for (int i=0; i < siguientes.size(); i++) {
+            Siguiente unSiguiente = siguientes.get(i);
+
+            for(int j=0; j<unSiguiente.getConjuntoSiguiente().size()-1; j++) {
+                String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
+
+                for(int k=j+1; k<unSiguiente.getConjuntoSiguiente().size(); k++) {
+
+                    String terminalVerificado = (String) unSiguiente.getConjuntoSiguiente().get(k);
+                    if(terminalEnEstudio.compareTo(terminalVerificado) == 0)
+                        unSiguiente.getConjuntoSiguiente().set(k, "");
+                }
+            }
+        }
+
+        for (int i=0; i < siguientes.size(); i++) {
+            Siguiente unSiguiente = siguientes.get(i);
+            List auxConjuntoTerminales = new ArrayList();
+
+            for(int j=0; j<unSiguiente.getConjuntoSiguiente().size(); j++) {
+                String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
+
+                if(terminalEnEstudio.compareTo("") != 0)
+                    auxConjuntoTerminales.add(terminalEnEstudio);
+            }
+
+            unSiguiente.setConjuntoSiguiente(auxConjuntoTerminales);
+        }
+
+
+        System.out.println("***Siguiente: Tercera Pasada***");
+        imprimirConjuntoSiguienteDeLosNoTerminales();
+
+
+    }
+
+    /**
+     * Reemplaza los textos siguiente(noTerminal) por su correspondiente
+     * valor de terminales de forma recursiva.
+     *
+     * @param unSiguiente Un Siguiente.
+     * @return Una lista de elementos terminales con duplicados.
+     */
+    private List reemplazarSiguientes(Siguiente unSiguiente) {
+
+        List result = new ArrayList();
+        for(int i=0; i<unSiguiente.getConjuntoSiguiente().size(); i++) {
+
+            String proposicion = (String) unSiguiente.getConjuntoSiguiente().get(i);
+            if(proposicion.indexOf("siguiente") >= 0) {
+
+                for(int j=0; j<siguientes.size(); j++) {
+
+                    Siguiente siguienteScan = siguientes.get(j);
+                    String siguiente = "siguiente("+siguienteScan.getNoTerminal()+")";
+                    if(siguiente.compareTo(proposicion) == 0) {
+                         result.addAll(reemplazarSiguientes(siguienteScan));
+                    }
+                }
+
+            } else {
+                result.add(proposicion);
+            }
+        }
+
+        return result;
+
     }
 
     private boolean tieneVacio(Primero primeroBeta) {
