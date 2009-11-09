@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://localhost:8080/BancaWebWS/BancaWebFE?wsdl" uri="xml-resources/web-service-references/BancaWebFE/wsdl/localhost_8080/BancaWebWS/BancaWebFE.wsdl"/>
+    <system systemId="http://localhost:8080/BancaWebWS/BancaWebFE?xsd=1" uri="xml-resources/web-service-references/BancaWebFE/wsdl/localhost_8080/BancaWebWS/BancaWebFE.xsd_1.xsd"/>
+</catalog>
