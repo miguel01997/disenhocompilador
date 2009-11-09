@@ -19,7 +19,7 @@ import sintacticanalizer.ec.components.Siguiente;
 
 /**
  *
- * @author Id Teknology
+ * @author Guido Casco
  */
 public class GeneradorTablaASP {
 

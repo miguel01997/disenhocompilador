@@ -11,7 +11,7 @@ import sintacticanalizer.ec.components.Primero;
 
 /**
  *
- * @author Id Teknology
+ * @author Guido Casco
  */
 public class GeneradorPrimero {
 
