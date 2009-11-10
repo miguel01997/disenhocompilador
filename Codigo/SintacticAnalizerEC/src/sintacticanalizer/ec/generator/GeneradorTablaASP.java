@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package sintacticanalizer.ec.generator;
 
 import java.io.BufferedReader;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sintacticanalizer.ec.components.PosicionMatrizProduccion;
 import sintacticanalizer.ec.components.Primero;
 import sintacticanalizer.ec.components.Siguiente;
 
@@ -25,15 +25,16 @@ public class GeneradorTablaASP {
 
     private List noTerminales = null;
     private List rightParts = null;
-    
     private List<Primero> primeros = null;
     private List<Siguiente> siguientes = null;
+    private List<PosicionMatrizProduccion> posMatrizProdList = null;
 
     public GeneradorTablaASP() {
         noTerminales = new ArrayList();
         rightParts = new ArrayList();
         primeros = new ArrayList();
         siguientes = new ArrayList();
+        posMatrizProdList = new ArrayList();
     }
 
     public List leerArchivo() throws IOException {
@@ -76,8 +77,8 @@ public class GeneradorTablaASP {
             noTerminales.add(leftPart);
             rightParts.add(rightPart);
 
-        /*Debug: leftPart and rightPart
-        System.out.println(leftPart + " " + rightPart);*/
+        /*Debug: leftPart and rightPart*/
+        System.out.println(leftPart + " " + rightPart);
         }
 
         //3- Generar los Primeros de los no terminales
@@ -88,18 +89,66 @@ public class GeneradorTablaASP {
         genPrim.generar();
         primeros = genPrim.getPrimeros();
 
+
         //4- Generar los Siguiente de los no terminales
         GeneradorSiguiente genSgte = new GeneradorSiguiente();
         genSgte.setNoTerminales(genPrim.getNoTerminales());
         genSgte.setRightParts(genPrim.getRightParts());
         genSgte.setGramaticas(gramaticas);
         genSgte.setPrimeros(primeros);
+        genSgte.setPosMatrizProdList(genPrim.getPosMatrizProdList());
         genSgte.generar();
         siguientes = genSgte.getSiguientes();
+
+        //5- Generar la tabla ASP
+        this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
+    }
+
+    public static void main(String[] args) {
+        new GeneradorTablaASP().generar();
     }
 
 
-    public static void main(String [] args) {
-        new GeneradorTablaASP().generar();
+    /**
+     * GETTER AND SETER ATRIBUTOS
+     */
+    public List getNoTerminales() {
+        return noTerminales;
+    }
+
+    public void setNoTerminales(List noTerminales) {
+        this.noTerminales = noTerminales;
+    }
+
+    public List<PosicionMatrizProduccion> getPosMatrizProdList() {
+        return posMatrizProdList;
+    }
+
+    public void setPosMatrizProdList(List<PosicionMatrizProduccion> posMatrizProdList) {
+        this.posMatrizProdList = posMatrizProdList;
+    }
+
+    public List<Primero> getPrimeros() {
+        return primeros;
+    }
+
+    public void setPrimeros(List<Primero> primeros) {
+        this.primeros = primeros;
+    }
+
+    public List getRightParts() {
+        return rightParts;
+    }
+
+    public void setRightParts(List rightParts) {
+        this.rightParts = rightParts;
+    }
+
+    public List<Siguiente> getSiguientes() {
+        return siguientes;
+    }
+
+    public void setSiguientes(List<Siguiente> siguientes) {
+        this.siguientes = siguientes;
     }
 }

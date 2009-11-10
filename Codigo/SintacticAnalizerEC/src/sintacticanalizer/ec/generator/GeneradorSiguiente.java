@@ -7,6 +7,7 @@ package sintacticanalizer.ec.generator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import sintacticanalizer.ec.components.PosicionMatrizProduccion;
 import sintacticanalizer.ec.components.Primero;
 import sintacticanalizer.ec.components.Siguiente;
 
@@ -21,6 +22,7 @@ public class GeneradorSiguiente {
     private List gramaticas = null;
     private List<Primero> primeros = null;
     private List<Siguiente> siguientes = null;
+    private List<PosicionMatrizProduccion> posMatrizProdList = null;
 
     public GeneradorSiguiente() {
         noTerminales = new ArrayList();
@@ -28,6 +30,7 @@ public class GeneradorSiguiente {
         gramaticas = new ArrayList();
         primeros = new ArrayList();
         siguientes = new ArrayList();
+        posMatrizProdList = new ArrayList();
     }
 
     public void generar() {
@@ -491,6 +494,73 @@ public class GeneradorSiguiente {
         imprimirConjuntoSiguienteDeLosNoTerminales();
 
 
+        //3- Reemplazar el vacio por terminales del siguiente del no terminal
+        List<PosicionMatrizProduccion> auxPosMatrizProdList = new ArrayList();
+        for (int i = 0; i < posMatrizProdList.size(); i++) {
+            PosicionMatrizProduccion pos = posMatrizProdList.get(i);
+
+            String noTerminal = pos.getNoTerminal();
+            String terminal = pos.getTerminal();
+            int posicionEnTerminal = terminal.indexOf("e");
+            if (posicionEnTerminal >= 0) {
+                auxPosMatrizProdList.addAll(getPosMatrizProdListFromSiguiente(noTerminal, pos));
+            } else {
+                auxPosMatrizProdList.add(pos);
+            }
+        }
+        posMatrizProdList = auxPosMatrizProdList;
+        
+        System.out.println("***Matriz: 3da. Pasada Siguiente: Sin primero e interpretando el vacio***");
+        imprimirMatriz();
+
+    }
+
+    private List<PosicionMatrizProduccion> getPosMatrizProdListFromSiguiente(String noTerminal, PosicionMatrizProduccion pos) {
+        List<PosicionMatrizProduccion> posList = new ArrayList();
+
+        Siguiente sgteNoTerminal = getSiguienteByNoTerminal(noTerminal);
+
+        List conjuntoSiguiente = sgteNoTerminal.getConjuntoSiguiente();
+
+        for (int i=0; i<conjuntoSiguiente.size(); i++) {
+
+            String terminal = (String) conjuntoSiguiente.get(i);
+
+            PosicionMatrizProduccion newPos = new PosicionMatrizProduccion();
+            newPos.setNoTerminal(pos.getNoTerminal());
+            newPos.setTerminal(terminal);
+            newPos.setProduccion(pos.getProduccion());
+            posList.add(newPos);
+        }
+
+
+        return posList;
+    }
+
+    private Siguiente getSiguienteByNoTerminal(String noTerminal) {
+
+        Siguiente unSiguiente = null;
+        for (int i = 0; i < siguientes.size(); i++) {
+
+            unSiguiente = siguientes.get(i);
+
+            if (unSiguiente.getNoTerminal().compareTo(noTerminal) == 0) {
+                break;
+            }
+        }
+
+        return unSiguiente;
+    }
+
+    private void imprimirMatriz() {
+        for (int i = 0; i < posMatrizProdList.size(); i++) {
+            PosicionMatrizProduccion pos = posMatrizProdList.get(i);
+
+            System.out.println("No Terminal: " + pos.getNoTerminal());
+            System.out.println("Terminal: " + pos.getTerminal());
+            System.out.println("Produccion: " + pos.getNoTerminal() + ">" + pos.getProduccion());
+
+        }
     }
 
     /**
@@ -622,4 +692,14 @@ public class GeneradorSiguiente {
     public void setPrimeros(List<Primero> primeros) {
         this.primeros = primeros;
     }
+
+    public List<PosicionMatrizProduccion> getPosMatrizProdList() {
+        return posMatrizProdList;
+    }
+
+    public void setPosMatrizProdList(List<PosicionMatrizProduccion> posMatrizProdList) {
+        this.posMatrizProdList = posMatrizProdList;
+    }
+
+    
 }
