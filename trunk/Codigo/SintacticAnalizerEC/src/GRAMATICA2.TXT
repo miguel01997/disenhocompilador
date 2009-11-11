@@ -1,0 +1,3 @@
+PROG>module DECLARS ; PROCS end
+DECLARS>d|d ; DECLARS
+PROCS>p|p ; PROCS
