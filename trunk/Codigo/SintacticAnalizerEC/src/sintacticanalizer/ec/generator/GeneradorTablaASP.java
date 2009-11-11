@@ -78,8 +78,8 @@ public class GeneradorTablaASP {
             noTerminales.add(leftPart);
             rightParts.add(rightPart);
 
-        /*Debug: leftPart and rightPart*/
-        System.out.println(leftPart + " " + rightPart);
+        /*Debug: leftPart and rightPart
+        System.out.println(leftPart + " " + rightPart);*/
         }
 
         //3- Generar los Primeros de los no terminales
