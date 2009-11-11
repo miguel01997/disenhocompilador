@@ -4,6 +4,7 @@
  */
 package sintacticanalizer.ec.generator;
 
+import sintacticanalizer.ec.components.ASPNR;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +20,7 @@ import sintacticanalizer.ec.components.PosicionMatrizProduccion;
  * Clase principal en la cual se llamaran a los metodos para generar la tabla ASP
  * asi como al analizador sintactico.
  */
-public class MainASP {
+public class GeneradorASPNR {
 
     private GeneradorTablaASP generadorASP;
     private List<PosicionMatrizProduccion> tabla;
@@ -28,7 +29,7 @@ public class MainASP {
     private Vector col1 = new Vector();
     String cadena[] = {"id", "+", "id", "*", "id", "$"};
 
-    public MainASP() {
+    public GeneradorASPNR() {
 
         generadorASP = new GeneradorTablaASP();
 
@@ -152,7 +153,7 @@ public class MainASP {
     }
 
     public static void main(String argv[]) throws IOException {
-        new MainASP().principal();
+        new GeneradorASPNR().principal();
 
 
     }
