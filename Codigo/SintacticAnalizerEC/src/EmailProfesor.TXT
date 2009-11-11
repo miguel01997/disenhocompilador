@@ -1,0 +1,33 @@
+Entre las gramáticas de ejemplo pueden utilizar:
+
+a. Obviamente las dos que vimos en clase y que se encuentran en el
+libro: Suma / multiplicación de operandos, y, la dada como ejemplo de
+gramática ambigua que corresponde al problema del IF-THEN-ELSE anidado
+
+b. Otros ejemplos:
+
+Gramatica 1:
+S -> ABC
+A -> aAa | a
+B -> aBb | Bb | b
+C -> bc | c
+
+cadena de entrada> aabbc
+
+Gramatica 2:
+PROG -> module DECLARS ; PROCS end
+DECLARS -> d | d ; DECLARS
+PROCS -> p | p ; PROCS
+
+cadena de entrada: module d ; d ; p ; p ; end
+
+Gramatica 3 :
+V -> R T
+R -> id R | id
+T ->  type | id
+
+cadena de entrada: id id
+
+Comentarios: Consideren que es posible que la entrada corresponda a
+gramáticas ambiguas, pero sin recursión por la izquierda (como fue el
+caso del anidamiento del IF-THEN-ELSE).
