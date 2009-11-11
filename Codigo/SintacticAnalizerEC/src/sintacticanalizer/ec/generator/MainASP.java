@@ -138,13 +138,17 @@ public class MainASP {
      */
     public void principal() throws IOException {
         // leerGramatica();
+        boolean estado = generadorASP.generar();
 
-        generadorASP.generar();
-        cargarTabla();
-        ASPNR asp = new ASPNR(matriz, fila1, col1);
-        for (int i = 0; i < cadena.length; i++) {
-            asp.analizar(cadena[i]);
-        }
+        if (estado == true) {
+            cargarTabla();
+            ASPNR asp = new ASPNR(matriz, fila1, col1);
+            for (int i = 0; i < cadena.length; i++) {
+                asp.analizar(cadena[i]);
+            }
+        } else
+            System.out.println("La gramatica es ambigua, esto se detecto en la tabla, " +
+                               "cuando dos producciones se iba a insertar en la misma posicion");
     }
 
     public static void main(String argv[]) throws IOException {

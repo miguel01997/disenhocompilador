@@ -71,107 +71,20 @@ public class GeneradorSiguiente {
                     String oracion = tokens.nextToken();
 
                     int posWhiteSpace = oracion.indexOf(" ");
-                if (posWhiteSpace >= 0) {
-                    StringTokenizer tokensO = new StringTokenizer(oracion, " ", false);
+                    if (posWhiteSpace >= 0) {
+                        StringTokenizer tokensO = new StringTokenizer(oracion, " ", false);
 
-                    //2er. Caso: Existe A -> B Beta esto implica
-                    //           que a sgte(B) se agrega Prim(Beta)
-                    //           menos vacio "e".
-                    if (tokensO.countTokens() == 2) {
+                        //2er. Caso: Existe A -> B Beta esto implica
+                        //           que a sgte(B) se agrega Prim(Beta)
+                        //           menos vacio "e".
+                        if (tokensO.countTokens() == 2) {
 
-                        //B y Beta son no terminales
-                        String simbolo1 = tokensO.nextToken();
-                        String simbolo2 = tokensO.nextToken();
+                            //B y Beta son no terminales
+                            String simbolo1 = tokensO.nextToken();
+                            String simbolo2 = tokensO.nextToken();
 
-                        if (esNoTerminal(simbolo1) == true &&
-                                esNoTerminal(simbolo2) == true) {
-
-                            //Se busca siguiente B en siguientes.
-                            Siguiente siguienteB = null;
-                            for (int l = 0; l < siguientes.size(); l++) {
-                                Siguiente sgteBuscado = siguientes.get(l);
-
-                                if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
-                                    siguienteB = sgteBuscado;
-                                    break;
-                                }
-                            }
-
-
-                            siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
-
-                        
-                        //B es no terminal y Beta es terminal
-                        } else if (esNoTerminal(simbolo1) == true &&
-                                esNoTerminal(simbolo2) == false) {
-
-                            //Se busca siguiente B en siguientes.
-                            Siguiente siguienteB = null;
-                            for (int l = 0; l < siguientes.size(); l++) {
-                                Siguiente sgteBuscado = siguientes.get(l);
-
-                                if (simbolo1.compareTo(sgteBuscado.getNoTerminal()) == 0) {
-                                    siguienteB = sgteBuscado;
-                                    break;
-                                }
-                            }
-
-                            //Se agrega en siguienteB el primero(terminal)
-                            //que es igual al mismo terminal.
-                            siguienteB.agregarConjuntoSiguiente(simbolo2);
-
-                        //3er. Caso: A -> alfa B, se tiene que copiar
-                        //           todo siguiente(A) a siguiente(B)
-                        } else if (esNoTerminal(simbolo1) == false &&
-                                esNoTerminal(simbolo2) == true) {
-
-                            //Se busca siguiente B en siguientes.
-                            Siguiente siguienteB = null;
-                            for (int l = 0; l < siguientes.size(); l++) {
-                                Siguiente sgteBuscado = siguientes.get(l);
-
-                                if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
-                                    siguienteB = sgteBuscado;
-                                    break;
-                                }
-                            }
-
-                            //Copiar todo lo que tiene siguiente(A) en
-                            //siguiente(B)
-                            siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
-
-                        }
-
-                    //2do. Caso: A -> alfa B Beta esto implica
-                    //           que a sgte(B) se le agrega Prim(Beta)
-                    //           menos vacio "e".
-                    } else if (tokensO.countTokens() == 3) {
-
-                        String simbolo1 = tokensO.nextToken();
-                        String simbolo2 = tokensO.nextToken();
-                        String simbolo3 = tokensO.nextToken();
-
-                        //alfa es terminal, B es no terminal y Beta es no terminal
-                        if (esNoTerminal(simbolo1) == false &&
-                                esNoTerminal(simbolo2) == true) {
-
-
-                            if (esNoTerminal(simbolo3) == false) {
-                                //Se busca siguiente B en siguientes.
-                                Siguiente siguienteB = null;
-                                for (int l = 0; l < siguientes.size(); l++) {
-                                    Siguiente sgteBuscado = siguientes.get(l);
-
-                                    if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
-                                        siguienteB = sgteBuscado;
-                                        break;
-                                    }
-                                }
-
-                                //Se agrega en siguienteB el primero(terminal)
-                                //que es igual al mismo terminal.
-                                siguienteB.agregarConjuntoSiguiente(simbolo3);
-                            } else {
+                            if (esNoTerminal(simbolo1) == true &&
+                                    esNoTerminal(simbolo2) == true) {
 
                                 //Se busca siguiente B en siguientes.
                                 Siguiente siguienteB = null;
@@ -184,50 +97,13 @@ public class GeneradorSiguiente {
                                     }
                                 }
 
-                                //Se busca primero Beta en primeros.
-                                Primero primeroBeta = null;
-                                for (int l = 0; l < primeros.size(); l++) {
-                                    Primero primBuscado = primeros.get(l);
 
-                                    if (simbolo3.compareTo(primBuscado.getNoTerminal()) == 0) {
-                                        primeroBeta = primBuscado;
-                                        break;
-                                    }
-                                }
+                                siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
 
-                                if (tieneVacio(primeroBeta) == true) {
-                                    siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
-                                }
 
-                                //Se copia todos los terminales del primero Beta a siguiente B
-                                //sin el vacio "e"
-                                for (int l = 0; l < primeroBeta.getConjuntoPrimero().size(); l++) {
-                                    String terminal = (String) primeroBeta.getConjuntoPrimero().get(l);
-                                    if (terminal.compareTo("e") != 0) {
-                                        siguienteB.agregarConjuntoSiguiente(terminal);
-                                    }
-                                }
-
-                            }
-                        //alfa es terminal, B es no terminal y Beta es terminal
-                        } else if (esNoTerminal(simbolo1) == false &&
-                                esNoTerminal(simbolo2) == true) {
-                        }
-                    }
-
-                } else {
-                    if (oracion.compareTo("e") != 0) {
-
-                        //3er. Caso: Existe A -> B esto implica
-                        //           todos los terminales en siguiente(A)
-                        //           se copia en siguiente(B).
-
-                        //B es no terminal
-                        String simbolo1 = oracion;
-
-                        if (esNoTerminal(simbolo1) == true) {
-
-                            if (simbolo1.compareTo(siguienteEnEstudio.getNoTerminal()) == 0) {
+                            //B es no terminal y Beta es terminal
+                            } else if (esNoTerminal(simbolo1) == true &&
+                                    esNoTerminal(simbolo2) == false) {
 
                                 //Se busca siguiente B en siguientes.
                                 Siguiente siguienteB = null;
@@ -240,20 +116,144 @@ public class GeneradorSiguiente {
                                     }
                                 }
 
-                                //Se copia todo lo siguiente(A) en
+                                //Se agrega en siguienteB el primero(terminal)
+                                //que es igual al mismo terminal.
+                                siguienteB.agregarConjuntoSiguiente(simbolo2);
+
+                            //3er. Caso: A -> alfa B, se tiene que copiar
+                            //           todo siguiente(A) a siguiente(B)
+                            } else if (esNoTerminal(simbolo1) == false &&
+                                    esNoTerminal(simbolo2) == true) {
+
+                                //Se busca siguiente B en siguientes.
+                                Siguiente siguienteB = null;
+                                for (int l = 0; l < siguientes.size(); l++) {
+                                    Siguiente sgteBuscado = siguientes.get(l);
+
+                                    if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
+                                        siguienteB = sgteBuscado;
+                                        break;
+                                    }
+                                }
+
+                                //Copiar todo lo que tiene siguiente(A) en
                                 //siguiente(B)
-                                for (int l = 0; l < siguienteEnEstudio.getConjuntoSiguiente().size(); l++) {
+                                siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
 
-                                    String terminal = (String) siguienteEnEstudio.getConjuntoSiguiente().get(l);
+                            }
 
-                                    if (terminal.compareTo("e") != 0) {
-                                        siguienteB.agregarConjuntoSiguiente(terminal);
+                        //2do. Caso: A -> alfa B Beta esto implica
+                        //           que a sgte(B) se le agrega Prim(Beta)
+                        //           menos vacio "e".
+                        } else if (tokensO.countTokens() == 3) {
+
+                            String simbolo1 = tokensO.nextToken();
+                            String simbolo2 = tokensO.nextToken();
+                            String simbolo3 = tokensO.nextToken();
+
+                            //alfa es terminal, B es no terminal y Beta es no terminal
+                            if (esNoTerminal(simbolo1) == false &&
+                                    esNoTerminal(simbolo2) == true) {
+
+
+                                if (esNoTerminal(simbolo3) == false) {
+                                    //Se busca siguiente B en siguientes.
+                                    Siguiente siguienteB = null;
+                                    for (int l = 0; l < siguientes.size(); l++) {
+                                        Siguiente sgteBuscado = siguientes.get(l);
+
+                                        if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
+                                            siguienteB = sgteBuscado;
+                                            break;
+                                        }
+                                    }
+
+                                    //Se agrega en siguienteB el primero(terminal)
+                                    //que es igual al mismo terminal.
+                                    siguienteB.agregarConjuntoSiguiente(simbolo3);
+                                } else {
+
+                                    //Se busca siguiente B en siguientes.
+                                    Siguiente siguienteB = null;
+                                    for (int l = 0; l < siguientes.size(); l++) {
+                                        Siguiente sgteBuscado = siguientes.get(l);
+
+                                        if (simbolo2.compareTo(sgteBuscado.getNoTerminal()) == 0) {
+                                            siguienteB = sgteBuscado;
+                                            break;
+                                        }
+                                    }
+
+                                    //Se busca primero Beta en primeros.
+                                    Primero primeroBeta = null;
+                                    for (int l = 0; l < primeros.size(); l++) {
+                                        Primero primBuscado = primeros.get(l);
+
+                                        if (simbolo3.compareTo(primBuscado.getNoTerminal()) == 0) {
+                                            primeroBeta = primBuscado;
+                                            break;
+                                        }
+                                    }
+
+                                    if (tieneVacio(primeroBeta) == true) {
+                                        siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
+                                    }
+
+                                    //Se copia todos los terminales del primero Beta a siguiente B
+                                    //sin el vacio "e"
+                                    for (int l = 0; l < primeroBeta.getConjuntoPrimero().size(); l++) {
+                                        String terminal = (String) primeroBeta.getConjuntoPrimero().get(l);
+                                        if (terminal.compareTo("e") != 0) {
+                                            siguienteB.agregarConjuntoSiguiente(terminal);
+                                        }
+                                    }
+
+                                }
+                            //alfa es terminal, B es no terminal y Beta es terminal
+                            } else if (esNoTerminal(simbolo1) == false &&
+                                    esNoTerminal(simbolo2) == true) {
+                            }
+                        }
+
+                    } else {
+                        if (oracion.compareTo("e") != 0) {
+
+                            //3er. Caso: Existe A -> B esto implica
+                            //           todos los terminales en siguiente(A)
+                            //           se copia en siguiente(B).
+
+                            //B es no terminal
+                            String simbolo1 = oracion;
+
+                            if (esNoTerminal(simbolo1) == true) {
+
+                                if (simbolo1.compareTo(siguienteEnEstudio.getNoTerminal()) == 0) {
+
+                                    //Se busca siguiente B en siguientes.
+                                    Siguiente siguienteB = null;
+                                    for (int l = 0; l < siguientes.size(); l++) {
+                                        Siguiente sgteBuscado = siguientes.get(l);
+
+                                        if (simbolo1.compareTo(sgteBuscado.getNoTerminal()) == 0) {
+                                            siguienteB = sgteBuscado;
+                                            break;
+                                        }
+                                    }
+
+                                    //Se copia todo lo siguiente(A) en
+                                    //siguiente(B)
+                                    for (int l = 0; l < siguienteEnEstudio.getConjuntoSiguiente().size(); l++) {
+
+                                        String terminal = (String) siguienteEnEstudio.getConjuntoSiguiente().get(l);
+
+                                        if (terminal.compareTo("e") != 0) {
+                                            siguienteB.agregarConjuntoSiguiente(terminal);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
                 }
             } else {
                 String oracion = parteDer;
@@ -285,10 +285,10 @@ public class GeneradorSiguiente {
                                 }
                             }
 
-                            
+
                             siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
-                            
-                            
+
+
                         //B es no terminal y Beta es terminal
                         } else if (esNoTerminal(simbolo1) == true &&
                                 esNoTerminal(simbolo2) == false) {
@@ -451,7 +451,7 @@ public class GeneradorSiguiente {
 
         //   b- 2da Pasada: Se reemplazara de forma recursiva los textos
         //      siguiente(noTerminal) por su valor.
-        for (int i=0; i < siguientes.size(); i++) {
+        for (int i = 0; i < siguientes.size(); i++) {
             Siguiente unSiguiente = siguientes.get(i);
             unSiguiente.setConjuntoSiguiente(reemplazarSiguientes(unSiguiente));
         }
@@ -460,30 +460,32 @@ public class GeneradorSiguiente {
         imprimirConjuntoSiguienteDeLosNoTerminales();
 
         //   c- 3era Pasada: Eliminar terminales y vacios duplicados
-        for (int i=0; i < siguientes.size(); i++) {
+        for (int i = 0; i < siguientes.size(); i++) {
             Siguiente unSiguiente = siguientes.get(i);
 
-            for(int j=0; j<unSiguiente.getConjuntoSiguiente().size()-1; j++) {
+            for (int j = 0; j < unSiguiente.getConjuntoSiguiente().size() - 1; j++) {
                 String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
 
-                for(int k=j+1; k<unSiguiente.getConjuntoSiguiente().size(); k++) {
+                for (int k = j + 1; k < unSiguiente.getConjuntoSiguiente().size(); k++) {
 
                     String terminalVerificado = (String) unSiguiente.getConjuntoSiguiente().get(k);
-                    if(terminalEnEstudio.compareTo(terminalVerificado) == 0)
+                    if (terminalEnEstudio.compareTo(terminalVerificado) == 0) {
                         unSiguiente.getConjuntoSiguiente().set(k, "");
+                    }
                 }
             }
         }
 
-        for (int i=0; i < siguientes.size(); i++) {
+        for (int i = 0; i < siguientes.size(); i++) {
             Siguiente unSiguiente = siguientes.get(i);
             List auxConjuntoTerminales = new ArrayList();
 
-            for(int j=0; j<unSiguiente.getConjuntoSiguiente().size(); j++) {
+            for (int j = 0; j < unSiguiente.getConjuntoSiguiente().size(); j++) {
                 String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
 
-                if(terminalEnEstudio.compareTo("") != 0)
+                if (terminalEnEstudio.compareTo("") != 0) {
                     auxConjuntoTerminales.add(terminalEnEstudio);
+                }
             }
 
             unSiguiente.setConjuntoSiguiente(auxConjuntoTerminales);
@@ -509,7 +511,7 @@ public class GeneradorSiguiente {
             }
         }
         posMatrizProdList = auxPosMatrizProdList;
-        
+
         System.out.println("***Matriz: 3da. Pasada Siguiente: Sin primero e interpretando el vacio***");
         imprimirMatriz();
 
@@ -522,7 +524,7 @@ public class GeneradorSiguiente {
 
         List conjuntoSiguiente = sgteNoTerminal.getConjuntoSiguiente();
 
-        for (int i=0; i<conjuntoSiguiente.size(); i++) {
+        for (int i = 0; i < conjuntoSiguiente.size(); i++) {
 
             String terminal = (String) conjuntoSiguiente.get(i);
 
@@ -573,17 +575,17 @@ public class GeneradorSiguiente {
     private List reemplazarSiguientes(Siguiente unSiguiente) {
 
         List result = new ArrayList();
-        for(int i=0; i<unSiguiente.getConjuntoSiguiente().size(); i++) {
+        for (int i = 0; i < unSiguiente.getConjuntoSiguiente().size(); i++) {
 
             String proposicion = (String) unSiguiente.getConjuntoSiguiente().get(i);
-            if(proposicion.indexOf("siguiente") >= 0) {
+            if (proposicion.indexOf("siguiente") >= 0) {
 
-                for(int j=0; j<siguientes.size(); j++) {
+                for (int j = 0; j < siguientes.size(); j++) {
 
                     Siguiente siguienteScan = siguientes.get(j);
-                    String siguiente = "siguiente("+siguienteScan.getNoTerminal()+")";
-                    if(siguiente.compareTo(proposicion) == 0) {
-                         result.addAll(reemplazarSiguientes(siguienteScan));
+                    String siguiente = "siguiente(" + siguienteScan.getNoTerminal() + ")";
+                    if (siguiente.compareTo(proposicion) == 0) {
+                        result.addAll(reemplazarSiguientes(siguienteScan));
                     }
                 }
 
@@ -700,6 +702,4 @@ public class GeneradorSiguiente {
     public void setPosMatrizProdList(List<PosicionMatrizProduccion> posMatrizProdList) {
         this.posMatrizProdList = posMatrizProdList;
     }
-
-    
 }
