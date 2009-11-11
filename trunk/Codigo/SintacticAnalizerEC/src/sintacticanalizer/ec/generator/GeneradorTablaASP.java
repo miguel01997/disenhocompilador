@@ -28,6 +28,7 @@ public class GeneradorTablaASP {
     private List<Primero> primeros = null;
     private List<Siguiente> siguientes = null;
     private List<PosicionMatrizProduccion> posMatrizProdList = null;
+    private List<PosicionMatrizProduccion> produccionesAmbiguasList = null;
 
     public GeneradorTablaASP() {
         noTerminales = new ArrayList();
@@ -55,7 +56,7 @@ public class GeneradorTablaASP {
         return gramaticas;
     }
 
-    public void generar() {
+    public boolean generar() {
 
         //1- Leer el archivo y retornar una lista de las gramaticas
         List gramaticas = null;
@@ -102,10 +103,45 @@ public class GeneradorTablaASP {
 
         //5- Generar la tabla ASP
         this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
+
+        //6- Validar la tabla
+        boolean isAmbiguo = validarAmbiguedad();
+        if(isAmbiguo == true) {
+            System.out.println("La gramática es ambigua.");
+            return false;
+        } else {
+            System.out.println("La gramática no es ambigua.");
+            return true;
+        }
+    }
+
+    private boolean validarAmbiguedad() {
+
+        boolean result = false;
+
+        for(int i=0; i<posMatrizProdList.size()-1; i++) {
+            PosicionMatrizProduccion pos1 = posMatrizProdList.get(i);
+            for(int j=i+1; j<posMatrizProdList.size(); j++) {
+                PosicionMatrizProduccion pos2 = posMatrizProdList.get(j);
+
+                if(pos1.getTerminal().compareTo(pos2.getTerminal()) == 0 &&
+                   pos1.getNoTerminal().compareTo(pos2.getNoTerminal()) == 0) {
+                   result = true;
+                }
+            }
+        }
+
+        return result;
     }
 
     public static void main(String[] args) {
-        new GeneradorTablaASP().generar();
+        boolean estado = new GeneradorTablaASP().generar();
+
+        if (estado == true) {
+            System.out.println("Se puede ejecutar el ANALIZADOR SINTACTICO");
+        } else {
+            System.out.println("NO se puede ejecutar el ANALIZADOR SINTACTICO");
+        }
     }
 
 
@@ -151,4 +187,14 @@ public class GeneradorTablaASP {
     public void setSiguientes(List<Siguiente> siguientes) {
         this.siguientes = siguientes;
     }
+
+    public List<PosicionMatrizProduccion> getProduccionesAmbiguasList() {
+        return produccionesAmbiguasList;
+    }
+
+    public void setProduccionesAmbiguasList(List<PosicionMatrizProduccion> produccionesAmbiguasList) {
+        this.produccionesAmbiguasList = produccionesAmbiguasList;
+    }
+
+
 }
