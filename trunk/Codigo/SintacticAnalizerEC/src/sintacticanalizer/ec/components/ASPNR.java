@@ -1,4 +1,4 @@
-package sintacticanalizer.ec.generator;
+package sintacticanalizer.ec.components;
 
 import java.util.Vector;
 
