@@ -137,7 +137,7 @@ public class GeneradorASPNR {
      * el analizador, tanto de lectura de gramaticas y cadenas, asi como al generador
      * de los conjuntos primero y sigte y de la tablaASP y por ultimo al ASPNR
      */
-    public void principal() throws IOException {
+    public void generar() throws IOException {
         // leerGramatica();
         boolean estado = generadorASP.generar();
 
@@ -153,7 +153,7 @@ public class GeneradorASPNR {
     }
 
     public static void main(String argv[]) throws IOException {
-        new GeneradorASPNR().principal();
+        new GeneradorASPNR().generar();
 
 
     }
