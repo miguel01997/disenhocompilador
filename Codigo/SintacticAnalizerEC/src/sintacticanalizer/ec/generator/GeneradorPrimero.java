@@ -30,7 +30,7 @@ public class GeneradorPrimero {
         posMatrizProdList = new ArrayList();
     }
 
-    public void generar() {
+    public boolean generar() {
 
         //1- Generar los primeros de los no terminales
         //   a- 1era Pasada: Se obtendra el conjunto primero
@@ -202,6 +202,41 @@ public class GeneradorPrimero {
         System.out.println("***Matriz: 2da. Pasada Primero: Sin primero pero sin interpretar vacio***");
         imprimirMatriz();
 
+        //3- Verificar la ambiguedad
+        boolean esAmbiguo = validarAmbiguedad();
+
+        if(esAmbiguo == true) {
+            return false;
+        } else
+            return true;
+    }
+
+    private boolean validarAmbiguedad() {
+        
+        boolean result = false;
+        
+        for (int i = 0; i < primeros.size(); i++) {
+            Primero unPrimero = primeros.get(i);
+
+            String noTerminal = unPrimero.getNoTerminal();
+            List conjuntoPrimero = unPrimero.getConjuntoPrimero();
+
+            for (int j = 0; j < conjuntoPrimero.size()-1; j++) {
+                String terminal1 = (String) conjuntoPrimero.get(j);
+
+                for (int k = j+1; k < conjuntoPrimero.size(); k++) {
+                    String terminal2 = (String) conjuntoPrimero.get(k);
+
+                    if(terminal1.compareTo(terminal2) == 0) {
+                        result = true;
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        return result;
     }
 
     private boolean esNoTerminal(String terminalONoTerminal) {

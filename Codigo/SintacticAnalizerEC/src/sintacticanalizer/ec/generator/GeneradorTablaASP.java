@@ -87,32 +87,38 @@ public class GeneradorTablaASP {
         genPrim.setNoTerminales(noTerminales);
         genPrim.setRightParts(rightParts);
         genPrim.setGramaticas(gramaticas);
-        genPrim.generar();
+        boolean esAmbiguoPrim = genPrim.generar();
         primeros = genPrim.getPrimeros();
 
+        if(esAmbiguoPrim == true) {
 
-        //4- Generar los Siguiente de los no terminales
-        GeneradorSiguiente genSgte = new GeneradorSiguiente();
-        genSgte.setNoTerminales(genPrim.getNoTerminales());
-        genSgte.setRightParts(genPrim.getRightParts());
-        genSgte.setGramaticas(gramaticas);
-        genSgte.setPrimeros(primeros);
-        genSgte.setPosMatrizProdList(genPrim.getPosMatrizProdList());
-        genSgte.generar();
-        siguientes = genSgte.getSiguientes();
+            //4- Generar los Siguiente de los no terminales
+            GeneradorSiguiente genSgte = new GeneradorSiguiente();
+            genSgte.setNoTerminales(genPrim.getNoTerminales());
+            genSgte.setRightParts(genPrim.getRightParts());
+            genSgte.setGramaticas(gramaticas);
+            genSgte.setPrimeros(primeros);
+            genSgte.setPosMatrizProdList(genPrim.getPosMatrizProdList());
+            genSgte.generar();
+            siguientes = genSgte.getSiguientes();
 
-        //5- Generar la tabla ASP
-        this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
+            //5- Generar la tabla ASP
+            this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
 
-        //6- Validar la tabla
-        boolean isAmbiguo = validarAmbiguedad();
-        if(isAmbiguo == true) {
-            System.out.println("La gramática es ambigua.");
-            return false;
+            //6- Validar la tabla
+            boolean esAmbiguo = validarAmbiguedad();
+            if(esAmbiguo == true) {
+                System.out.println("La gramática es ambigua 1.");
+                return false;
+            } else {
+                System.out.println("La gramática no es ambigua.");
+                return true;
+            }
         } else {
-            System.out.println("La gramática no es ambigua.");
-            return true;
+            System.out.println("La gramática es ambigua 2.");
+            return false;
         }
+
     }
 
     private boolean validarAmbiguedad() {
