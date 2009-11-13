@@ -101,19 +101,17 @@ public class GeneradorTablaASP {
             genSgte.setPosMatrizProdList(genPrim.getPosMatrizProdList());
 
             boolean esAmbiguoSgte = false;
-            try {
-                genSgte.generar();
-                siguientes = genSgte.getSiguientes();
-            } catch (StackOverflowError e) {
-                esAmbiguoSgte = true;
-            }
-
+            esAmbiguoSgte = genSgte.generar();
+            
             if (esAmbiguoSgte == false) {
+                //5- Se obtiene la lista de siguientes
+                siguientes = genSgte.getSiguientes();
 
-                //5- Generar la tabla ASP
+
+                //6- Generar la tabla ASP
                 this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
 
-                //6- Validar la tabla
+                //7- Validar la tabla
                 boolean esAmbiguoTabla = validarAmbiguedad();
                 if (esAmbiguoTabla == true) {
                     System.out.println("La gramática es ambigua, verificación hecha en la Tabla ASP.");
@@ -127,8 +125,6 @@ public class GeneradorTablaASP {
                 System.out.println("La gramática es ambigua, verificación hecha en el Siguiente.");
                 return false;
             }
-
-
         } else {
             System.out.println("La gramática es ambigua, verificación hecha en Primero.");
             return false;
