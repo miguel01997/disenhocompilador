@@ -49,8 +49,8 @@ public class GeneradorTablaASP {
         BufferedReader in = new BufferedReader(fileReader);
         while ((s = in.readLine()) != null) {
             gramaticas.add("" + s);
-        /*Debug: Lectura del archivo
-        System.out.println(s);*/
+            /*Debug: Lectura del archivo
+            System.out.println(s);*/
         }
 
         return gramaticas;
@@ -78,8 +78,8 @@ public class GeneradorTablaASP {
             noTerminales.add(leftPart);
             rightParts.add(rightPart);
 
-        /*Debug: leftPart and rightPart
-        System.out.println(leftPart + " " + rightPart);*/
+            /*Debug: leftPart and rightPart
+            System.out.println(leftPart + " " + rightPart);*/
         }
 
         //3- Generar los Primeros de los no terminales
@@ -88,11 +88,14 @@ public class GeneradorTablaASP {
         genPrim.setRightParts(rightParts);
         genPrim.setGramaticas(gramaticas);
         boolean esAmbiguoPrim = genPrim.generar();
-        primeros = genPrim.getPrimeros();
 
+        //4- Validar ambiguedad en el Primero
         if (esAmbiguoPrim == true) {
+            
+            //5- Se obtiene la lista de primeros
+            primeros = genPrim.getPrimeros();
 
-            //4- Generar los Siguiente de los no terminales
+            //6- Generar los Siguiente de los no terminales
             GeneradorSiguiente genSgte = new GeneradorSiguiente();
             genSgte.setNoTerminales(genPrim.getNoTerminales());
             genSgte.setRightParts(genPrim.getRightParts());
@@ -102,16 +105,16 @@ public class GeneradorTablaASP {
 
             boolean esAmbiguoSgte = false;
             esAmbiguoSgte = genSgte.generar();
-            
+
+            //7- Validar ambiguedad en el Siguiente
             if (esAmbiguoSgte == false) {
-                //5- Se obtiene la lista de siguientes
+                //8- Se obtiene la lista de siguientes
                 siguientes = genSgte.getSiguientes();
 
-
-                //6- Generar la tabla ASP
+                //9- Se obtiene la lista que representa la tabla ASP
                 this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
 
-                //7- Validar la tabla
+                //10- Validar ambigudad en la tabla ASP
                 boolean esAmbiguoTabla = validarAmbiguedad();
                 if (esAmbiguoTabla == true) {
                     System.out.println("La gramática es ambigua, verificación hecha en la Tabla ASP.");
