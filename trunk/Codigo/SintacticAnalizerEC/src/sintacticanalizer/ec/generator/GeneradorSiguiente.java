@@ -33,8 +33,10 @@ public class GeneradorSiguiente {
         posMatrizProdList = new ArrayList();
     }
 
-    public void generar() {
+    public boolean generar() {
 
+        boolean esAmbiguoSgte = false;
+        
         //1- Se construye la lista de siguientes sin el conjunto de siguiente.
         for (int i = 0; i < noTerminales.size(); i++) {
 
@@ -269,72 +271,78 @@ public class GeneradorSiguiente {
         imprimirConjuntoSiguienteDeLosNoTerminales();
 
 
-        //   b- 2da Pasada: Se reemplazara de forma recursiva los textos
-        //      siguiente(noTerminal) por su valor.
-        for (int i = 0; i < siguientes.size(); i++) {
-            Siguiente unSiguiente = siguientes.get(i);
-            unSiguiente.setConjuntoSiguiente(reemplazarSiguientes(unSiguiente));
-        }
+        try {
 
-        System.out.println("***Siguiente: Segunda Pasada***");
-        imprimirConjuntoSiguienteDeLosNoTerminales();
+            //   b- 2da Pasada: Se reemplazara de forma recursiva los textos
+            //      siguiente(noTerminal) por su valor.
+            for (int i = 0; i < siguientes.size(); i++) {
+                Siguiente unSiguiente = siguientes.get(i);
+                unSiguiente.setConjuntoSiguiente(reemplazarSiguientes(unSiguiente));
+            }
 
-        //   c- 3era Pasada: Eliminar terminales y vacios duplicados
-        for (int i = 0; i < siguientes.size(); i++) {
-            Siguiente unSiguiente = siguientes.get(i);
+            System.out.println("***Siguiente: Segunda Pasada***");
+            imprimirConjuntoSiguienteDeLosNoTerminales();
 
-            for (int j = 0; j < unSiguiente.getConjuntoSiguiente().size() - 1; j++) {
-                String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
+            //   c- 3era Pasada: Eliminar terminales y vacios duplicados
+            for (int i = 0; i < siguientes.size(); i++) {
+                Siguiente unSiguiente = siguientes.get(i);
 
-                for (int k = j + 1; k < unSiguiente.getConjuntoSiguiente().size(); k++) {
+                for (int j = 0; j < unSiguiente.getConjuntoSiguiente().size() - 1; j++) {
+                    String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
 
-                    String terminalVerificado = (String) unSiguiente.getConjuntoSiguiente().get(k);
-                    if (terminalEnEstudio.compareTo(terminalVerificado) == 0) {
-                        unSiguiente.getConjuntoSiguiente().set(k, "");
+                    for (int k = j + 1; k < unSiguiente.getConjuntoSiguiente().size(); k++) {
+
+                        String terminalVerificado = (String) unSiguiente.getConjuntoSiguiente().get(k);
+                        if (terminalEnEstudio.compareTo(terminalVerificado) == 0) {
+                            unSiguiente.getConjuntoSiguiente().set(k, "");
+                        }
                     }
                 }
             }
-        }
 
-        for (int i = 0; i < siguientes.size(); i++) {
-            Siguiente unSiguiente = siguientes.get(i);
-            List auxConjuntoTerminales = new ArrayList();
+            for (int i = 0; i < siguientes.size(); i++) {
+                Siguiente unSiguiente = siguientes.get(i);
+                List auxConjuntoTerminales = new ArrayList();
 
-            for (int j = 0; j < unSiguiente.getConjuntoSiguiente().size(); j++) {
-                String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
+                for (int j = 0; j < unSiguiente.getConjuntoSiguiente().size(); j++) {
+                    String terminalEnEstudio = (String) unSiguiente.getConjuntoSiguiente().get(j);
 
-                if (terminalEnEstudio.compareTo("") != 0) {
-                    auxConjuntoTerminales.add(terminalEnEstudio);
+                    if (terminalEnEstudio.compareTo("") != 0) {
+                        auxConjuntoTerminales.add(terminalEnEstudio);
+                    }
+                }
+
+                unSiguiente.setConjuntoSiguiente(auxConjuntoTerminales);
+            }
+
+
+            System.out.println("***Siguiente: Tercera Pasada***");
+            imprimirConjuntoSiguienteDeLosNoTerminales();
+
+
+            //3- Reemplazar el vacio por terminales del siguiente del no terminal
+            List<PosicionMatrizProduccion> auxPosMatrizProdList = new ArrayList();
+            for (int i = 0; i < posMatrizProdList.size(); i++) {
+                PosicionMatrizProduccion pos = posMatrizProdList.get(i);
+
+                String noTerminal = pos.getNoTerminal();
+                String terminal = pos.getTerminal();
+                int posicionEnTerminal = terminal.indexOf("e");
+                if (posicionEnTerminal >= 0) {
+                    auxPosMatrizProdList.addAll(getPosMatrizProdListFromSiguiente(noTerminal, pos));
+                } else {
+                    auxPosMatrizProdList.add(pos);
                 }
             }
+            posMatrizProdList = auxPosMatrizProdList;
 
-            unSiguiente.setConjuntoSiguiente(auxConjuntoTerminales);
+            System.out.println("***Matriz: 3da. Pasada Siguiente: Sin primero e interpretando el vacio***");
+            imprimirMatriz();
+        } catch (StackOverflowError e) {
+            esAmbiguoSgte = true;
         }
 
-
-        System.out.println("***Siguiente: Tercera Pasada***");
-        imprimirConjuntoSiguienteDeLosNoTerminales();
-
-
-        //3- Reemplazar el vacio por terminales del siguiente del no terminal
-        List<PosicionMatrizProduccion> auxPosMatrizProdList = new ArrayList();
-        for (int i = 0; i < posMatrizProdList.size(); i++) {
-            PosicionMatrizProduccion pos = posMatrizProdList.get(i);
-
-            String noTerminal = pos.getNoTerminal();
-            String terminal = pos.getTerminal();
-            int posicionEnTerminal = terminal.indexOf("e");
-            if (posicionEnTerminal >= 0) {
-                auxPosMatrizProdList.addAll(getPosMatrizProdListFromSiguiente(noTerminal, pos));
-            } else {
-                auxPosMatrizProdList.add(pos);
-            }
-        }
-        posMatrizProdList = auxPosMatrizProdList;
-
-        System.out.println("***Matriz: 3da. Pasada Siguiente: Sin primero e interpretando el vacio***");
-        imprimirMatriz();
-
+        return esAmbiguoSgte;
     }
 
     public void iteracionTamanho2(String simboloA, String simboloB, Siguiente siguienteEnEstudio) {
@@ -356,7 +364,7 @@ public class GeneradorSiguiente {
                 }
             }
 
-            if(siguienteEnEstudio.getNoTerminal().compareTo(simbolo2) != 0) {
+            if (siguienteEnEstudio.getNoTerminal().compareTo(simbolo2) != 0) {
                 siguienteB.agregarConjuntoSiguiente("siguiente(" + siguienteEnEstudio.getNoTerminal() + ")");
             }
 
