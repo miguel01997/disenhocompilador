@@ -90,7 +90,7 @@ public class GeneradorTablaASP {
         boolean esAmbiguoPrim = genPrim.generar();
         primeros = genPrim.getPrimeros();
 
-        if(esAmbiguoPrim == true) {
+        if (esAmbiguoPrim == true) {
 
             //4- Generar los Siguiente de los no terminales
             GeneradorSiguiente genSgte = new GeneradorSiguiente();
@@ -99,23 +99,38 @@ public class GeneradorTablaASP {
             genSgte.setGramaticas(gramaticas);
             genSgte.setPrimeros(primeros);
             genSgte.setPosMatrizProdList(genPrim.getPosMatrizProdList());
-            genSgte.generar();
-            siguientes = genSgte.getSiguientes();
 
-            //5- Generar la tabla ASP
-            this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
-
-            //6- Validar la tabla
-            boolean esAmbiguo = validarAmbiguedad();
-            if(esAmbiguo == true) {
-                System.out.println("La gramática es ambigua 1.");
-                return false;
-            } else {
-                System.out.println("La gramática no es ambigua.");
-                return true;
+            boolean esAmbiguoSgte = false;
+            try {
+                genSgte.generar();
+                siguientes = genSgte.getSiguientes();
+            } catch (StackOverflowError e) {
+                esAmbiguoSgte = true;
             }
+
+            if (esAmbiguoSgte == false) {
+
+                //5- Generar la tabla ASP
+                this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
+
+                //6- Validar la tabla
+                boolean esAmbiguoTabla = validarAmbiguedad();
+                if (esAmbiguoTabla == true) {
+                    System.out.println("La gramática es ambigua, verificación hecha en la Tabla ASP.");
+                    return false;
+                } else {
+                    System.out.println("La gramática no es ambigua.");
+                    return true;
+                }
+
+            } else {
+                System.out.println("La gramática es ambigua, verificación hecha en el Siguiente.");
+                return false;
+            }
+
+
         } else {
-            System.out.println("La gramática es ambigua 2.");
+            System.out.println("La gramática es ambigua, verificación hecha en Primero.");
             return false;
         }
 
@@ -125,14 +140,14 @@ public class GeneradorTablaASP {
 
         boolean result = false;
 
-        for(int i=0; i<posMatrizProdList.size()-1; i++) {
+        for (int i = 0; i < posMatrizProdList.size() - 1; i++) {
             PosicionMatrizProduccion pos1 = posMatrizProdList.get(i);
-            for(int j=i+1; j<posMatrizProdList.size(); j++) {
+            for (int j = i + 1; j < posMatrizProdList.size(); j++) {
                 PosicionMatrizProduccion pos2 = posMatrizProdList.get(j);
 
-                if(pos1.getTerminal().compareTo(pos2.getTerminal()) == 0 &&
-                   pos1.getNoTerminal().compareTo(pos2.getNoTerminal()) == 0) {
-                   result = true;
+                if (pos1.getTerminal().compareTo(pos2.getTerminal()) == 0 &&
+                        pos1.getNoTerminal().compareTo(pos2.getNoTerminal()) == 0) {
+                    result = true;
                 }
             }
         }
@@ -149,7 +164,6 @@ public class GeneradorTablaASP {
             System.out.println("NO se puede ejecutar el ANALIZADOR SINTACTICO");
         }
     }
-
 
     /**
      * GETTER AND SETER ATRIBUTOS
@@ -201,6 +215,4 @@ public class GeneradorTablaASP {
     public void setProduccionesAmbiguasList(List<PosicionMatrizProduccion> produccionesAmbiguasList) {
         this.produccionesAmbiguasList = produccionesAmbiguasList;
     }
-
-
 }
