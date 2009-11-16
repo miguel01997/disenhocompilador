@@ -15,7 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sintacticanalizer.ec.components.PosicionMatrizProduccion;
 import sintacticanalizer.ec.components.Primero;
+import sintacticanalizer.ec.components.Regla;
 import sintacticanalizer.ec.components.Siguiente;
+import sintacticanalizer.ec.response.RespuestaTablaASP;
 
 /**
  *
@@ -132,6 +134,98 @@ public class GeneradorTablaASP {
             System.out.println("La gramática es ambigua, verificación hecha en Primero.");
             return false;
         }
+
+    }
+
+    public RespuestaTablaASP generar(List<Regla> reglas) {
+
+        RespuestaTablaASP rtasp = new RespuestaTablaASP();
+        
+        //1- Convertir la lista de reglas al formato de interpretacion
+        List gramaticas = new ArrayList();
+        for(int i = 0; i < reglas.size(); i++) {
+
+            Regla unaRegla = reglas.get(i);
+
+            gramaticas.add(unaRegla.getLeftPart()+">"+unaRegla.getRightPart());
+        }
+
+        //2- Obtener los no terminales
+        for (int i = 0; i < gramaticas.size(); i++) {
+
+            String unaGramatica = (String) gramaticas.get(i);
+            StringTokenizer tokens = new StringTokenizer(unaGramatica, ">", false);
+
+            String leftPart = tokens.nextToken();
+            String rightPart = tokens.nextToken();
+
+            noTerminales.add(leftPart);
+            rightParts.add(rightPart);
+
+            /*Debug: leftPart and rightPart
+            System.out.println(leftPart + " " + rightPart);*/
+        }
+
+        //3- Generar los Primeros de los no terminales
+        GeneradorPrimero genPrim = new GeneradorPrimero();
+        genPrim.setNoTerminales(noTerminales);
+        genPrim.setRightParts(rightParts);
+        genPrim.setGramaticas(gramaticas);
+        boolean esAmbiguoPrim = genPrim.generar();
+
+        //4- Validar ambiguedad en el Primero
+        if (esAmbiguoPrim == true) {
+
+            //5- Se obtiene la lista de primeros
+            primeros = genPrim.getPrimeros();
+
+            //6- Generar los Siguiente de los no terminales
+            GeneradorSiguiente genSgte = new GeneradorSiguiente();
+            genSgte.setNoTerminales(genPrim.getNoTerminales());
+            genSgte.setRightParts(genPrim.getRightParts());
+            genSgte.setGramaticas(gramaticas);
+            genSgte.setPrimeros(primeros);
+            genSgte.setPosMatrizProdList(genPrim.getPosMatrizProdList());
+
+            boolean esAmbiguoSgte = false;
+            esAmbiguoSgte = genSgte.generar();
+
+            //7- Validar ambiguedad en el Siguiente
+            if (esAmbiguoSgte == false) {
+                //8- Se obtiene la lista de siguientes
+                siguientes = genSgte.getSiguientes();
+
+                //9- Se obtiene la lista que representa la tabla ASP
+                this.setPosMatrizProdList(genSgte.getPosMatrizProdList());
+
+                //10- Validar ambigudad en la tabla ASP
+                boolean esAmbiguoTabla = validarAmbiguedad();
+                if (esAmbiguoTabla == true) {
+
+                    rtasp.setError(true);
+                    rtasp.setMensaje("La gramática es ambigua, verificación hecha en la Tabla ASP.");
+                    
+                } else {
+
+                    rtasp.setError(false);
+                    rtasp.setMensaje("Generación realizada satisfactoriamente!!!");
+
+                }
+
+            } else {
+
+                rtasp.setError(true);
+                rtasp.setMensaje("La gramática es ambigua, verificación hecha en el Siguiente.");
+                
+            }
+        } else {
+
+            rtasp.setError(true);
+            rtasp.setMensaje("La gramática es ambigua, verificación hecha en Primero.");
+            
+        }
+
+        return rtasp;
 
     }
 
