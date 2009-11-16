@@ -9,8 +9,9 @@ package sintacticanalizer.ec.components;
  *
  * @author Id Teknology
  */
-public class BnfRules {
+public class Regla {
 
+    private long id;
     private String leftPart = "";
     private String rightPart = "";
 
@@ -28,6 +29,14 @@ public class BnfRules {
 
     public void setRightPart(String rightPart) {
         this.rightPart = rightPart;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     

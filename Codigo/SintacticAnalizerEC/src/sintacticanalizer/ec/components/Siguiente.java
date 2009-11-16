@@ -16,6 +16,9 @@ public class Siguiente {
     private String noTerminal = "";
     private List conjuntoSiguiente = null;
 
+    private String noTerminalFormateado = "";
+    private String conjuntoSiguienteFormateado = "";
+
     public Siguiente() {
         noTerminal = "";
         conjuntoSiguiente = new ArrayList();
@@ -43,5 +46,38 @@ public class Siguiente {
 
     public String getNoTerminal() {
         return noTerminal;
+    }
+
+    public String getNoTerminalFormateado() {
+
+        noTerminalFormateado = "siguiente(" + noTerminal + ")";
+
+        return noTerminalFormateado;
+    }
+
+    public String getConjuntoSiguienteFormateado() {
+
+        conjuntoSiguienteFormateado = "";
+
+        if (conjuntoSiguiente.size() > 0) {
+
+            conjuntoSiguienteFormateado = conjuntoSiguienteFormateado + "{ ";
+
+            for (int j = 0; j < conjuntoSiguiente.size(); j++) {
+
+                if (j < conjuntoSiguiente.size() - 1) {
+                    conjuntoSiguienteFormateado = conjuntoSiguienteFormateado + conjuntoSiguiente.get(j) + ", ";
+                } else {
+                    conjuntoSiguienteFormateado = conjuntoSiguienteFormateado + conjuntoSiguiente.get(j);
+                }
+            }
+
+            conjuntoSiguienteFormateado = conjuntoSiguienteFormateado + " }";
+        } else if (conjuntoSiguiente.size() == 0) {
+            conjuntoSiguienteFormateado = "";
+        }
+
+
+        return conjuntoSiguienteFormateado;
     }
 }
