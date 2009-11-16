@@ -12,7 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import sintacticanalizer.ec.components.AnalisisASPNR;
 import sintacticanalizer.ec.components.PosicionMatrizProduccion;
+import sintacticanalizer.ec.components.Regla;
+import sintacticanalizer.ec.response.RespuestaASPNR;
+import sintacticanalizer.ec.response.RespuestaTablaASP;
 
 /**
  *
@@ -27,7 +31,10 @@ public class GeneradorASPNR {
     private String matriz[][] = null;
     private Vector fila1 = new Vector();
     private Vector col1 = new Vector();
-    String cadena[] = {"id", "+", "id", "*", "id", "$"};
+    private String cadena[] = {"id", "+", "id", "*", "id", "$"};
+
+    private List cadenaEntrada = null;
+    private List<AnalisisASPNR> analisis = null;
 
     public GeneradorASPNR() {
 
@@ -152,9 +159,76 @@ public class GeneradorASPNR {
                                "cuando dos producciones se iba a insertar en la misma posicion");
     }
 
+    /** Función que realiza la llamada a todos los metodos necesario para integrar
+     * el analizador, tanto de lectura de gramaticas y cadenas, asi como al generador
+     * de los conjuntos primero y sigte y de la tablaASP y por ultimo al ASPNR
+     */
+    public RespuestaASPNR generar(List<Regla> reglas) throws IOException {
+
+        RespuestaASPNR estadoASPNR = new RespuestaASPNR();
+        
+        RespuestaTablaASP estadoTablaASP = generadorASP.generar(reglas);
+
+        if (estadoTablaASP.getError() == false) {
+            cargarTabla();
+            ASPNR asp = new ASPNR(matriz, fila1, col1);
+            for (int i = 0; i < cadenaEntrada.size(); i++) {
+                asp.analizarTerminal(((String) cadenaEntrada.get(i)));
+            }
+
+            analisis = asp.getAnalisis();
+            estadoASPNR.setError(false);
+            estadoASPNR.setMensaje("Generación realizada satisfactoriamente!!!");
+
+        } else {
+            estadoASPNR.setError(true);
+            estadoASPNR.setMensaje(estadoTablaASP.getMensaje());
+
+        }
+
+        return estadoASPNR;
+    }
+
     public static void main(String argv[]) throws IOException {
         new GeneradorASPNR().generar();
 
 
     }
+
+    /**
+     * GETTER AND SETER ATRIBUTOS
+     */
+    public List<PosicionMatrizProduccion> getTabla() {
+        return tabla;
+    }
+
+    public void setTabla(List<PosicionMatrizProduccion> tabla) {
+        this.tabla = tabla;
+    }
+
+    public GeneradorTablaASP getGeneradorASP() {
+        return generadorASP;
+    }
+
+    public void setGeneradorASP(GeneradorTablaASP generadorASP) {
+        this.generadorASP = generadorASP;
+    }
+
+    public List getCadenaEntrada() {
+        return cadenaEntrada;
+    }
+
+    public void setCadenaEntrada(List cadenaEntrada) {
+        this.cadenaEntrada = cadenaEntrada;
+    }
+
+    public List<AnalisisASPNR> getAnalisis() {
+        return analisis;
+    }
+
+    public void setAnalisis(List<AnalisisASPNR> analisis) {
+        this.analisis = analisis;
+    }
+
+    
 }
