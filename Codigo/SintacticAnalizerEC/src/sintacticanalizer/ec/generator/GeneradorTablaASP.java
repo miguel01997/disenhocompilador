@@ -26,6 +26,7 @@ import sintacticanalizer.ec.response.RespuestaTablaASP;
 public class GeneradorTablaASP {
 
     private List noTerminales = null;
+    private List terminales = null;
     private List rightParts = null;
     private List<Primero> primeros = null;
     private List<Siguiente> siguientes = null;
@@ -34,6 +35,7 @@ public class GeneradorTablaASP {
 
     public GeneradorTablaASP() {
         noTerminales = new ArrayList();
+        terminales = new ArrayList();
         rightParts = new ArrayList();
         primeros = new ArrayList();
         siguientes = new ArrayList();
@@ -308,4 +310,14 @@ public class GeneradorTablaASP {
     public void setProduccionesAmbiguasList(List<PosicionMatrizProduccion> produccionesAmbiguasList) {
         this.produccionesAmbiguasList = produccionesAmbiguasList;
     }
+
+    public List getTerminales() {
+        return terminales;
+    }
+
+    public void setTerminales(List terminales) {
+        this.terminales = terminales;
+    }
+
+    
 }

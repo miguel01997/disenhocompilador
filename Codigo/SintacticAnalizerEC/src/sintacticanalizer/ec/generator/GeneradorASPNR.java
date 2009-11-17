@@ -26,7 +26,7 @@ import sintacticanalizer.ec.response.RespuestaTablaASP;
  */
 public class GeneradorASPNR {
 
-    private GeneradorTablaASP generadorASP;
+    private GeneradorTablaASP generadorASP = null;
     private List<PosicionMatrizProduccion> tabla;
     private String matriz[][] = null;
     private Vector fila1 = new Vector();
@@ -96,8 +96,32 @@ public class GeneradorASPNR {
         fila1 = new Vector();
         col1 = new Vector();
         int a, b;
-        matriz = new String[10][10];
         tabla = generadorASP.getPosMatrizProdList();
+
+        //1- Se obtiene todos los terminales y noterminales de la gramatica
+        for (int i = 0; i < tabla.size(); i++) {
+            PosicionMatrizProduccion pos = tabla.get(i);
+            String aux1 = pos.getNoTerminal();
+            String aux2 = pos.getTerminal();
+
+            if (!fila1.contains(aux1)) {
+                fila1.add(aux1);
+                a = fila1.indexOf(aux1);
+            } else {
+                a = fila1.indexOf(aux1);
+            }
+
+            if (!col1.contains(aux2)) {
+                col1.add(aux2);
+                b = col1.indexOf(aux2);
+            } else {
+                b = col1.indexOf(aux2);
+            }
+        }
+
+        //2- Se dimensiona la matriz y se carga
+        //en el contenido de la tabla en la matriz
+        matriz = new String[fila1.size()][col1.size()];
         for (int i = 0; i < tabla.size(); i++) {
             PosicionMatrizProduccion pos = tabla.get(i);
             String aux1 = pos.getNoTerminal();
@@ -119,6 +143,7 @@ public class GeneradorASPNR {
 
             matriz[a][b] = pos.getProduccion();
         }
+
         System.out.println(" Vector fila: ");
         for (int j = 0; j < fila1.size(); j++) {
             System.out.print(fila1.get(j) + "\t");
@@ -163,12 +188,11 @@ public class GeneradorASPNR {
      * el analizador, tanto de lectura de gramaticas y cadenas, asi como al generador
      * de los conjuntos primero y sigte y de la tablaASP y por ultimo al ASPNR
      */
-    public RespuestaASPNR generar(List<Regla> reglas) throws IOException {
+    public RespuestaASPNR generar(List<Regla> reglas, RespuestaTablaASP estadoTablaASP) throws IOException {
 
         RespuestaASPNR estadoASPNR = new RespuestaASPNR();
         
-        RespuestaTablaASP estadoTablaASP = generadorASP.generar(reglas);
-
+        
         if (estadoTablaASP.getError() == false) {
             cargarTabla();
             ASPNR asp = new ASPNR(matriz, fila1, col1);
@@ -178,7 +202,7 @@ public class GeneradorASPNR {
 
             analisis = asp.getAnalisis();
             estadoASPNR.setError(false);
-            estadoASPNR.setMensaje("Generación realizada satisfactoriamente!!!");
+            estadoASPNR.setMensaje("Análisis realizada satisfactoriamente!!!");
 
         } else {
             estadoASPNR.setError(true);
