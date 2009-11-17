@@ -17,6 +17,7 @@ import sintacticanalizer.ec.components.PosicionMatrizProduccion;
 import sintacticanalizer.ec.components.Primero;
 import sintacticanalizer.ec.components.Regla;
 import sintacticanalizer.ec.components.Siguiente;
+import sintacticanalizer.ec.response.RespuestaPrimero;
 import sintacticanalizer.ec.response.RespuestaTablaASP;
 
 /**
@@ -91,10 +92,10 @@ public class GeneradorTablaASP {
         genPrim.setNoTerminales(noTerminales);
         genPrim.setRightParts(rightParts);
         genPrim.setGramaticas(gramaticas);
-        boolean esAmbiguoPrim = genPrim.generar();
+        RespuestaPrimero rp = genPrim.generar();
 
         //4- Validar ambiguedad en el Primero
-        if (esAmbiguoPrim == true) {
+        if (rp.getError() == false) {
             
             //5- Se obtiene la lista de primeros
             primeros = genPrim.getPrimeros();
@@ -129,7 +130,7 @@ public class GeneradorTablaASP {
                 }
 
             } else {
-                System.out.println("La gramática es ambigua, verificación hecha en el Siguiente.");
+                System.out.println(rp.getMensaje());
                 return false;
             }
         } else {
@@ -173,10 +174,10 @@ public class GeneradorTablaASP {
         genPrim.setNoTerminales(noTerminales);
         genPrim.setRightParts(rightParts);
         genPrim.setGramaticas(gramaticas);
-        boolean esAmbiguoPrim = genPrim.generar();
+        RespuestaPrimero rp = genPrim.generar();
 
         //4- Validar ambiguedad en el Primero
-        if (esAmbiguoPrim == true) {
+        if (rp.getError() == false) {
 
             //5- Se obtiene la lista de primeros
             primeros = genPrim.getPrimeros();
@@ -223,7 +224,7 @@ public class GeneradorTablaASP {
         } else {
 
             rtasp.setError(true);
-            rtasp.setMensaje("La gramática es ambigua, verificación hecha en Primero.");
+            rtasp.setMensaje(rp.getMensaje());
             
         }
 

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import sintacticanalizer.ec.components.PosicionMatrizProduccion;
 import sintacticanalizer.ec.components.Primero;
+import sintacticanalizer.ec.response.RespuestaPrimero;
 
 /**
  *
@@ -30,7 +31,9 @@ public class GeneradorPrimero {
         posMatrizProdList = new ArrayList();
     }
 
-    public boolean generar() {
+    public RespuestaPrimero generar() {
+
+        RespuestaPrimero rp = new RespuestaPrimero();
 
         //1- Generar los primeros de los no terminales
         //   a- 1era Pasada: Se obtendra el conjunto primero
@@ -170,10 +173,21 @@ public class GeneradorPrimero {
 
         //   b- 2da Pasada: Se reemplazara de forma recursiva los textos
         //      primero(noTerminal) por su valor.
-        for (int i = 0; i < primeros.size(); i++) {
-            Primero unPrimero = primeros.get(i);
-            unPrimero.setConjuntoPrimero(reemplazarPrimeros(unPrimero));
+
+        try {
+            for (int i = 0; i < primeros.size(); i++) {
+                Primero unPrimero = primeros.get(i);
+                unPrimero.setConjuntoPrimero(reemplazarPrimeros(unPrimero));
+            }
+        } catch (StackOverflowError e) {
+
+            rp.setError(true);
+            rp.setMensaje("La Gramática es Recursiva por la Izquierda, verificación realizada en primero");
+
+            return rp;
         }
+
+
 
         System.out.println("***Primero: Segunda Pasada***");
         imprimirConjuntoPrimeroDeLosNoTerminales();
@@ -206,9 +220,18 @@ public class GeneradorPrimero {
         boolean esAmbiguo = validarAmbiguedad();
 
         if(esAmbiguo == true) {
-            return false;
-        } else
-            return true;
+
+            rp.setError(true);
+            rp.setMensaje("La Gramática es ambigua, verificación realizada en primero");
+
+            return rp;
+
+        } else {
+            rp.setError(false);
+            rp.setMensaje("La Gramática no es ambigua, verificación realizada en primero");
+
+            return rp;
+        }
     }
 
     private boolean validarAmbiguedad() {

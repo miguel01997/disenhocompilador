@@ -2,6 +2,7 @@ package sintacticanalizer.ec.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /*
@@ -19,7 +20,12 @@ public class ASPNR {
     private String M[][];
     private Vector fila,  col;
 
+    //Analisis ASPNR
     private List<AnalisisASPNR> analisis = null;
+
+    //Derivacion por la Izquierda
+    private List derivacionPorIzq = null;
+    private int punteroDerivacionPorIzq = 0;
 
     public ASPNR(String[][] matriz, Vector fila, Vector col) {
         stack = new java.util.Stack();
@@ -29,6 +35,7 @@ public class ASPNR {
         this.col = col;
 
         analisis = new ArrayList();
+        derivacionPorIzq = new ArrayList();
     }
 
     /** Esta función realiza el analisis sintactico predictivo no recursivo
@@ -151,7 +158,7 @@ public class ASPNR {
                             stack.push(M[r][c].substring(s, s + 2).trim());
                         }
                         P.append(X);
-                        P.append("->");
+                        P.append(">");
                         P.append(M[r][c]);
                     } else {
                         System.out.println("ASPNR: no production");
@@ -173,6 +180,38 @@ public class ASPNR {
             unAnalisis.setOutput(P.toString());
             analisis.add(unAnalisis);
         } while (!stack.empty());
+
+    }
+
+
+    /**
+     * Derivar por la izquierda la cadena de entrada, utilizando
+     */
+    public void derivarPorIzquierda() {
+
+        for(int i=0; i<analisis.size(); i++) {
+            AnalisisASPNR unAnalisis = analisis.get(i);
+
+            if(unAnalisis.getOutput().compareTo("--") != 0 && derivacionPorIzq.size() == 0) {
+                
+                StringTokenizer tokens = new StringTokenizer(unAnalisis.getOutput(), ">", false);
+                
+                derivacionPorIzq.add(tokens.nextToken());
+                derivacionPorIzq.add(tokens.nextToken());
+
+            } else if(unAnalisis.getOutput().compareTo("--") != 0 && unAnalisis.getOutput().indexOf("terminal") < 0) {
+
+                StringTokenizer tokens = new StringTokenizer(unAnalisis.getOutput(), ">", false);
+
+                String token1 = tokens.nextToken();
+                String token2 = tokens.nextToken();
+
+                StringTokenizer tokenList = new StringTokenizer((String) derivacionPorIzq.get(derivacionPorIzq.size()-1), " ", false);
+
+//                if()
+
+            }
+        }
 
     }
 
