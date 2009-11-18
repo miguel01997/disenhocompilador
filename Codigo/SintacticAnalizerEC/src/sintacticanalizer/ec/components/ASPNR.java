@@ -29,6 +29,7 @@ public class ASPNR {
 
     public ASPNR(String[][] matriz, Vector fila, Vector col) {
         stack = new java.util.Stack();
+        stack.push("$");
         stack.push(fila.get(0).toString());
         M = matriz;
         this.fila = fila;
@@ -38,7 +39,10 @@ public class ASPNR {
         derivacionPorIzq = new ArrayList();
     }
 
-    /** Esta función realiza el analisis sintactico predictivo no recursivo
+    /** Esta función realiza el analisis sintactico predictivo no recursivo,
+     * utilizando la matriz ASP, los conjuntos de no terminales (fila) y el de
+     * terminales (col) para realizar las comparaciones, asi como una pila
+     * en vez de utilizar la recursion.
      */
     public void analizar(String input) {
         String X;
@@ -66,7 +70,8 @@ public class ASPNR {
                     P.append(input);
                     ip++;
                 } else {
-                    System.out.println("ASPNR: unmatched terminal at position " + ip);
+                    System.out.println("ASPNR: no se reconoce el simbolo de entrada" +
+                            "en la posicion: " + ip);
                     break;
                 }
             } else { // X es no-terminal
@@ -82,11 +87,12 @@ public class ASPNR {
                         P.append("->");
                         P.append(M[r][c]);
                     } else {
-                        System.out.println("ASPNR: no production");
+                        System.out.println("ASPNR: sin produccion");
                         break;
                     }
                 } else {
-                    System.out.println("ASPNR: unrecognized char at position " + ip);
+                    System.out.println("ASPNR: no se reconoce el simbolo de entrada" +
+                            "en la posicion: " + ip);
                     break;
                 }
             }
@@ -145,7 +151,8 @@ public class ASPNR {
                     P.append(input);
                     ip++;
                 } else {
-                    System.out.println("ASPNR: unmatched terminal at position " + ip);
+                    System.out.println("ASPNR: no se reconoce el simbolo de entrada" +
+                            "en la posicion: " + ip);
                     break;
                 }
             } else { // X es no-terminal
@@ -161,11 +168,12 @@ public class ASPNR {
                         P.append(">");
                         P.append(M[r][c]);
                     } else {
-                        System.out.println("ASPNR: no production");
+                        System.out.println("ASPNR: sin produccion");
                         break;
                     }
                 } else {
-                    System.out.println("ASPNR: unrecognized char at position " + ip);
+                    System.out.println("ASPNR: no se reconoce el simbolo de entrada" +
+                            "en la posicion: " + ip);
                     break;
                 }
             }
@@ -183,56 +191,55 @@ public class ASPNR {
 
     }
 
-
     /**
      * Derivar por la izquierda la cadena de entrada, utilizando
      */
     public List derivarPorIzquierda() {
 
-        for(int i=0; i<analisis.size(); i++) {
+        for (int i = 0; i < analisis.size(); i++) {
             AnalisisASPNR unAnalisis = analisis.get(i);
 
-            if(unAnalisis.getOutput().compareTo("--") != 0 && derivacionPorIzq.size() == 0) {
-                
+            if (unAnalisis.getOutput().compareTo("--") != 0 && derivacionPorIzq.size() == 0) {
+
                 StringTokenizer tokens = new StringTokenizer(unAnalisis.getOutput(), ">", false);
-                
+
                 derivacionPorIzq.add(tokens.nextToken());
                 derivacionPorIzq.add(tokens.nextToken());
 
-            } else if(unAnalisis.getOutput().compareTo("--") != 0 && unAnalisis.getOutput().indexOf("terminal") < 0) {
+            } else if (unAnalisis.getOutput().compareTo("--") != 0 && unAnalisis.getOutput().indexOf("terminal") < 0) {
 
                 StringTokenizer tokens = new StringTokenizer(unAnalisis.getOutput(), ">", false);
 
                 String noTerminal = tokens.nextToken();
                 String proposicion = tokens.nextToken();
 
-                StringTokenizer tokenList = new StringTokenizer((String) derivacionPorIzq.get(derivacionPorIzq.size()-1), " ", false);
+                StringTokenizer tokenList = new StringTokenizer((String) derivacionPorIzq.get(derivacionPorIzq.size() - 1), " ", false);
 
                 String terminalONoTerminal = "";
                 String primerNoTerminal = "";
 
                 String parteIzqDelPrimerNoTerminal = "";
                 String parteDerDelPrimerNoTerminal = "";
-                while(tokenList.hasMoreTokens()) {
+                while (tokenList.hasMoreTokens()) {
 
                     terminalONoTerminal = tokenList.nextToken();
 
-                    if(esNoTerminal(terminalONoTerminal) == true && primerNoTerminal.compareTo("") == 0) {
+                    if (esNoTerminal(terminalONoTerminal) == true && primerNoTerminal.compareTo("") == 0) {
                         primerNoTerminal = terminalONoTerminal;
                     }
 
-                    if(primerNoTerminal.compareTo("") == 0) {
+                    if (primerNoTerminal.compareTo("") == 0) {
                         parteIzqDelPrimerNoTerminal = parteIzqDelPrimerNoTerminal + terminalONoTerminal + " ";
-                    } else if(primerNoTerminal.compareTo("") != 0 && terminalONoTerminal.compareTo(primerNoTerminal) != 0) {
+                    } else if (primerNoTerminal.compareTo("") != 0 && terminalONoTerminal.compareTo(primerNoTerminal) != 0) {
                         parteDerDelPrimerNoTerminal = parteDerDelPrimerNoTerminal + " " + terminalONoTerminal;
                     }
                 }
 
                 if (primerNoTerminal.compareTo(noTerminal) == 0 && proposicion.compareTo("e") != 0) {
-                    String nuevoElemento =  parteIzqDelPrimerNoTerminal + proposicion + parteDerDelPrimerNoTerminal;
+                    String nuevoElemento = parteIzqDelPrimerNoTerminal + proposicion + parteDerDelPrimerNoTerminal;
                     derivacionPorIzq.add(nuevoElemento);
                 } else if (primerNoTerminal.compareTo(noTerminal) == 0 && proposicion.compareTo("e") == 0) {
-                    String nuevoElemento =  parteIzqDelPrimerNoTerminal + parteDerDelPrimerNoTerminal;
+                    String nuevoElemento = parteIzqDelPrimerNoTerminal + parteDerDelPrimerNoTerminal;
                     derivacionPorIzq.add(nuevoElemento);
                 }
             }
@@ -241,7 +248,6 @@ public class ASPNR {
 
         return derivacionPorIzq;
     }
-
 
     private boolean esNoTerminal(String terminalONoTerminal) {
 
@@ -283,7 +289,6 @@ public class ASPNR {
         return false;
     }
 
-
     /**
      * GETTER AND SETER ATRIBUTOS
      */
@@ -294,6 +299,4 @@ public class ASPNR {
     public void setAnalisis(List<AnalisisASPNR> analisis) {
         this.analisis = analisis;
     }
-
-    
 }
