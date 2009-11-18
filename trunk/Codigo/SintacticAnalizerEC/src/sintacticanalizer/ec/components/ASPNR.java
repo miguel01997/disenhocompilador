@@ -47,6 +47,7 @@ public class ASPNR {
     public void analizar(String input) {
         String X;
         StringBuffer P;
+        Vector aux;
         int r, c;
         ip = 0;
         this.input = input;
@@ -80,9 +81,24 @@ public class ASPNR {
                 if (r != -1 && c != -1) {
                     if (M[r][c] != null) {
                         stack.pop();
-                        for (int s = M[r][c].length() - 2; s >= 0; s -= 2) {
-                            stack.push(M[r][c].substring(s, s + 2).trim());
+                        StringTokenizer tokens = new StringTokenizer(M[r][c], " ", false);
+                        int cont = tokens.countTokens();
+                        aux = new Vector();
+                        if (cont > 1) {
+                            for (int i = 0; i < cont; i++) {
+                                String token1 = tokens.nextToken();
+                                aux.insertElementAt(token1, 0);
+                            }
+                            for (int j = 0; j < aux.size(); j++) {
+                                String cad = aux.get(j).toString();
+                                stack.push(cad);
+                            }
+                        } else if ((M[r][c]).trim().compareTo("e") != 0) {
+                            stack.push(M[r][c]);
                         }
+                        /*for (int s = M[r][c].length() - 2; s >= 0; s -= 2) {
+                        stack.push(M[r][c].substring(s, s + 2).trim());
+                        }*/
                         P.append(X);
                         P.append("->");
                         P.append(M[r][c]);
@@ -108,7 +124,7 @@ public class ASPNR {
     public void analizarTerminal(String input) {
 
         AnalisisASPNR unAnalisis = null;
-
+        Vector aux;
         String X;
         StringBuffer P;
         int r, c;
@@ -161,9 +177,24 @@ public class ASPNR {
                 if (r != -1 && c != -1) {
                     if (M[r][c] != null) {
                         stack.pop();
-                        for (int s = M[r][c].length() - 2; s >= 0; s -= 2) {
-                            stack.push(M[r][c].substring(s, s + 2).trim());
+                        StringTokenizer tokens = new StringTokenizer(M[r][c], " ", false);
+                        int cont = tokens.countTokens();
+                        aux = new Vector();
+                        if (cont > 1) {
+                            for (int i = 0; i < cont; i++) {
+                                String token1 = tokens.nextToken();
+                                aux.insertElementAt(token1, 0);
+                            }
+                            for (int j = 0; j < aux.size(); j++) {
+                                String cad = aux.get(j).toString();
+                                stack.push(cad);
+                            }
+                        } else if ((M[r][c]).trim().compareTo("e") != 0) {
+                            stack.push(M[r][c]);
                         }
+                        /* for (int s = M[r][c].length() - 2; s >= 0; s -= 2) {
+                        stack.push(M[r][c].substring(s, s + 2).trim());
+                        }*/
                         P.append(X);
                         P.append(">");
                         P.append(M[r][c]);
