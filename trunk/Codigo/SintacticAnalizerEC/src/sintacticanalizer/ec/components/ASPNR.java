@@ -187,7 +187,7 @@ public class ASPNR {
     /**
      * Derivar por la izquierda la cadena de entrada, utilizando
      */
-    public void derivarPorIzquierda() {
+    public List derivarPorIzquierda() {
 
         for(int i=0; i<analisis.size(); i++) {
             AnalisisASPNR unAnalisis = analisis.get(i);
@@ -203,16 +203,59 @@ public class ASPNR {
 
                 StringTokenizer tokens = new StringTokenizer(unAnalisis.getOutput(), ">", false);
 
-                String token1 = tokens.nextToken();
-                String token2 = tokens.nextToken();
+                String noTerminal = tokens.nextToken();
+                String proposicion = tokens.nextToken();
 
                 StringTokenizer tokenList = new StringTokenizer((String) derivacionPorIzq.get(derivacionPorIzq.size()-1), " ", false);
 
-//                if()
+                String terminalONoTerminal = "";
+                String primerNoTerminal = "";
 
+                String parteIzqDelPrimerNoTerminal = "";
+                String parteDerDelPrimerNoTerminal = "";
+                while(tokenList.hasMoreTokens()) {
+
+                    terminalONoTerminal = tokenList.nextToken();
+
+                    if(esNoTerminal(terminalONoTerminal) == true && primerNoTerminal.compareTo("") == 0) {
+                        primerNoTerminal = terminalONoTerminal;
+                    }
+
+                    if(primerNoTerminal.compareTo("") == 0) {
+                        parteIzqDelPrimerNoTerminal = parteIzqDelPrimerNoTerminal + terminalONoTerminal + " ";
+                    } else if(primerNoTerminal.compareTo("") != 0 && terminalONoTerminal.compareTo(primerNoTerminal) != 0) {
+                        parteDerDelPrimerNoTerminal = parteDerDelPrimerNoTerminal + " " + terminalONoTerminal;
+                    }
+                }
+
+                if (primerNoTerminal.compareTo(noTerminal) == 0 && proposicion.compareTo("e") != 0) {
+                    String nuevoElemento =  parteIzqDelPrimerNoTerminal + proposicion + parteDerDelPrimerNoTerminal;
+                    derivacionPorIzq.add(nuevoElemento);
+                } else if (primerNoTerminal.compareTo(noTerminal) == 0 && proposicion.compareTo("e") == 0) {
+                    String nuevoElemento =  parteIzqDelPrimerNoTerminal + parteDerDelPrimerNoTerminal;
+                    derivacionPorIzq.add(nuevoElemento);
+                }
+            }
+
+        }
+
+        return derivacionPorIzq;
+    }
+
+
+    private boolean esNoTerminal(String terminalONoTerminal) {
+
+        boolean result = false;
+
+        for (int i = 0; i < fila.size(); i++) {
+            String noTerminal = (String) fila.get(i);
+            if (terminalONoTerminal.compareTo(noTerminal) == 0) {
+                result = true;
+                break;
             }
         }
 
+        return result;
     }
 
     /** Verifica si el parametro es un no terminal, de ser asi retorna la
