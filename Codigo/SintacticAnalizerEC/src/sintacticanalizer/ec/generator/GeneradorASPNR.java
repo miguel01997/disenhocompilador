@@ -32,8 +32,11 @@ public class GeneradorASPNR {
     private Vector fila1 = new Vector();
     private Vector col1 = new Vector();
     private String cadena[] = {"id", "+", "id", "*", "id", "$"};
+
     private List cadenaEntrada = null;
     private List<AnalisisASPNR> analisis = null;
+    private List derivacionPorIzq = null;
+    private String derivacionPorIzqFormateado = null;
 
     public GeneradorASPNR() {
 
@@ -338,11 +341,11 @@ public class GeneradorASPNR {
                 analisis = asp.getAnalisis();
 
                 //6- Realizar la Derivación por la Izquierda.
-//                asp.derivarPorIzquierda();
+                derivacionPorIzq = asp.derivarPorIzquierda();
 
 
                 estadoASPNR.setError(false);
-                estadoASPNR.setMensaje("Análisis realizada satisfactoriamente!!!");
+                estadoASPNR.setMensaje("Análisis realizada satisfactoriamente");
 
             } else {
 
@@ -402,4 +405,35 @@ public class GeneradorASPNR {
     public void setAnalisis(List<AnalisisASPNR> analisis) {
         this.analisis = analisis;
     }
+
+    public List getDerivacionPorIzq() {
+        return derivacionPorIzq;
+    }
+
+    public void setDerivacionPorIzq(List derivacionPorIzq) {
+        this.derivacionPorIzq = derivacionPorIzq;
+    }
+
+    public String getDerivacionPorIzqFormateado() {
+
+        derivacionPorIzqFormateado = "";
+
+        for(int i=0; i<derivacionPorIzq.size(); i++) {
+
+            if(i < derivacionPorIzq.size()-1)
+                derivacionPorIzqFormateado = derivacionPorIzqFormateado + derivacionPorIzq.get(i) + "->";
+            else 
+                derivacionPorIzqFormateado = derivacionPorIzqFormateado + derivacionPorIzq.get(i);
+
+        }
+
+
+        return derivacionPorIzqFormateado;
+    }
+
+    public void setDerivacionPorIzqFormateado(String derivacionPorIzqFormateado) {
+        this.derivacionPorIzqFormateado = derivacionPorIzqFormateado;
+    }
+
+
 }
